@@ -182,4 +182,4 @@ pytest, Docker, nginx
 ```
 
 Docker Hub
-https://hub.docker.com/r/t3stdr1v3/credit-default-service
+https://hub.docker.com/r/testdrivee/credit-default-service
