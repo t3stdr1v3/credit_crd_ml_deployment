@@ -1,0 +1,29 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Models (большие бинарные файлы)
+*.pkl
+*.joblib
+
+# Data files
+data/*.xls
+data/*.xlsx
+data/*.csv
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
