@@ -5,27 +5,49 @@
 ## Структура проекта
 credit-card-ml-deployment/
 ├── app/
+
 │ ├── init.py # Инициализация модуля
+
 │ ├── api.py # Flask-приложение (эндпоинты /health, /predict)
+
 │ └── model_handler.py # Загрузка модели, валидация, инференс
+
 ├── models/
+
 │ ├── train_model.py # Скрипт обучения модели v1 (RandomForest)
+
 │ ├── train_model_v2.py # Скрипт обучения модели v2 (GradientBoosting)
+
 │ ├── model_v1.pkl # Сохранённая модель v1
+
 │ ├── model_v2.pkl # Сохранённая модель v2
+
 │ ├── features.json # Список признаков
+
 │ ├── metrics_v1.json # Метрики модели v1
+
 │ └── metrics_v2.json # Метрики модели v2
+
 ├── tests/
+
 │ ├── init.py
+
 │ └── test_api.py # Тесты API (12 тестов)
+
 ├── docker/
+
 │ ├── Dockerfile # Конфигурация Docker-образа
+
 │ └── nginx.conf # Конфиг nginx для балансировки
+
 ├── docker-compose.yml # Оркестрация сервисов
+
 ├── requirements.txt # Зависимости Python
+
 ├── ARCHITECTURE.md # Архитектурные решения и MLOps-концепты
+
 ├── ab_test_plan.md # План A/B-тестирования
+
 └── README.md # Документация
 
 
