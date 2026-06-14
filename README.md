@@ -4,6 +4,7 @@
 
 ## Структура проекта
 credit-card-ml-deployment/
+
 ├── app/
 
 │ ├── init.py # Инициализация модуля
@@ -73,12 +74,14 @@ credit-card-ml-deployment/
 ### `GET /health` — Проверка работоспособности
 
 **Ответ (200):**
-``` json
+```
+json
 {
     "status": "healthy",
     "available_models": ["v1", "v2"],
     "timestamp": "2026-06-14T10:32:09"
-} ```
+} 
+```
 
 POST /predict — Прогноз дефолта
 Query-параметры:
@@ -88,7 +91,8 @@ Query-параметры:
 ?version=v2 — модель v2
 
 Тело запроса (JSON):
-``` json
+```
+json
 {
     "LIMIT_BAL": 20000.0,
     "SEX": 2,
@@ -100,18 +104,82 @@ Query-параметры:
     "BILL_AMT4": 0.0, "BILL_AMT5": 0.0, "BILL_AMT6": 0.0,
     "PAY_AMT1": 0.0, "PAY_AMT2": 689.0, "PAY_AMT3": 0.0,
     "PAY_AMT4": 0.0, "PAY_AMT5": 0.0, "PAY_AMT6": 0.0
-} ```
+}
+```
 
 Ответ (200):
-
-``` json
+```
+ json
 {
     "prediction": 1,
     "probability": 0.7105,
     "model_version": "v1"
-} ```
+} 
+```
 
 Ошибки:
-400 — невалидный JSON или отсутствуют/лишние признаки
-404 — запрошенная версия модели не найдена
-500 — внутренняя ошибка сервера
+400 — невалидный JSON или отсутствуют/лишние признаки,
+404 — запрошенная версия модели не найдена,
+500 — внутренняя ошибка сервера,
+
+## Запуск
+Локально
+```
+bash
+git clone https://github.com/t3stdr1v3/credit_crd_ml_deployment.git
+cd credit_crd_ml_deployment
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+python models/train_model.py
+python models/train_model_v2.py
+python app/api.py
+```
+
+Docker
+```
+bash
+docker build -f docker/Dockerfile -t credit-default-service .
+docker run -p 5000:5000 credit-default-service
+Docker Compose
+bash
+docker compose up -d
+docker compose down
+```
+Тестирование
+```
+bash
+# Windows
+set PYTHONPATH=%CD% && pytest tests/test_api.py -v
+
+# Linux/macOS
+PYTHONPATH=. pytest tests/test_api.py -v
+```
+
+Примеры curl-запросов
+```
+bash
+# проверка health
+curl http://localhost:5000/health
+
+# прогноз дефолта (v1 по умолчанию)
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"LIMIT_BAL":20000,"SEX":2,"EDUCATION":2,"MARRIAGE":1,"AGE":24,"PAY_0":2,"PAY_2":2,"PAY_3":-1,"PAY_4":-1,"PAY_5":-2,"PAY_6":-2,"BILL_AMT1":3913,"BILL_AMT2":3102,"BILL_AMT3":689,"BILL_AMT4":0,"BILL_AMT5":0,"BILL_AMT6":0,"PAY_AMT1":0,"PAY_AMT2":689,"PAY_AMT3":0,"PAY_AMT4":0,"PAY_AMT5":0,"PAY_AMT6":0}'
+
+# прогноз с выбором версии v2
+curl -X POST "http://localhost:5000/predict?version=v2" \
+  -H "Content-Type: application/json" \
+  -d '{"LIMIT_BAL":20000,"SEX":2,"EDUCATION":2,"MARRIAGE":1,"AGE":24,"PAY_0":2,"PAY_2":2,"PAY_3":-1,"PAY_4":-1,"PAY_5":-2,"PAY_6":-2,"BILL_AMT1":3913,"BILL_AMT2":3102,"BILL_AMT3":689,"BILL_AMT4":0,"BILL_AMT5":0,"BILL_AMT6":0,"PAY_AMT1":0,"PAY_AMT2":689,"PAY_AMT3":0,"PAY_AMT4":0,"PAY_AMT5":0,"PAY_AMT6":0}'
+```
+
+Технологии
+```
+Python 3.12, Flask, scikit-learn, pandas, numpy
+
+pytest, Docker, nginx
+```
+
+Docker Hub
+https://hub.docker.com/r/t3stdr1v3/credit-default-service
